@@ -22,7 +22,7 @@ function calcularRendimiento({ costoInversion, cantidadComprada, precioVentaUnit
     const unidadesRestantes = cantidadComprada - cantidadVendidaMes;
     const valorInventarioRestante = unidadesRestantes * costoUnitario;
     const gananciaBruta = ingresosTotales - costoDeLoVendido;
-    const roi = (gananciaBruta / costoInversion) * 100;
+    const retorno = (gananciaBruta / costoInversion) * 100;
     const margen = ingresosTotales > 0 ? (gananciaBruta / ingresosTotales) * 100 : 0;
 
     return {
@@ -32,9 +32,13 @@ function calcularRendimiento({ costoInversion, cantidadComprada, precioVentaUnit
         unidadesRestantes,
         valorInventarioRestante,
         gananciaBruta,
-        roi,
+        retorno,
         margen
     };
 }
 
-module.exports = { calcularRendimiento };
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { calcularRendimiento };
+} else {
+    globalThis.CalculoRendimiento = { calcularRendimiento };
+}

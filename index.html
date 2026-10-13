@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#edf0ed">
+    <title>Salud Financiera | Rendimiento de producto</title>
+    <link rel="stylesheet" href="src/web/styles.css">
+    <script src="src/calculo-rendimiento.js" defer></script>
+    <script src="src/clasificacion-rendimiento.js" defer></script>
+    <script src="src/web/app.js" defer></script>
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="#" aria-label="Salud Financiera, inicio">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none">
+                    <path d="M5 23.5 12.2 16l5.2 4.8L27 9.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M20.5 9.5H27V16" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span>Salud <strong>Financiera</strong></span>
+        </a>
+        <span class="topbar-label">HERRAMIENTA PARA TU NEGOCIO</span>
+    </header>
+
+    <main class="page-shell">
+        <section class="intro">
+            <p class="eyebrow">ANÁLISIS DE PRODUCTO</p>
+            <h1>¿Cómo le va a tu producto?</h1>
+            <p class="intro-copy">Ingresa los datos de compra y venta para entender tus ganancias y el inventario que aún tienes.</p>
+        </section>
+
+        <div class="workspace">
+            <section class="panel form-panel" aria-labelledby="form-title">
+                <div class="panel-heading">
+                    <div>
+                        <h2 id="form-title">Datos del producto</h2>
+                        <p>Completa estos cinco datos para ver el análisis.</p>
+                    </div>
+                </div>
+
+                <form id="analysis-form" novalidate>
+                    <label class="field" for="product-name">
+                        <span>Nombre del producto</span>
+                        <span class="input-wrap">
+                            <input id="product-name" name="productName" type="text" maxlength="60" placeholder="Ej. Café especial" required>
+                        </span>
+                    </label>
+
+                    <label class="field" for="investment">
+                        <span>Inversión Total</span>
+                        <span class="input-wrap">
+                            <span class="input-prefix">$</span>
+                            <input id="investment" name="investment" type="number" min="0.01" step="0.01" placeholder="1,000.00" required>
+                        </span>
+                        <small>Lo que pagaste por todas las unidades.</small>
+                    </label>
+
+                    <label class="field" for="purchased">
+                        <span></span>
+                        <span class="input-wrap">
+                            <input id="purchased" name="purchased" type="number" min="1" step="1" placeholder="100" required>
+                            <span class="input-suffix">unidades</span>
+                        </span>
+                    </label>
+
+                    <label class="field" for="price">
+                        <span>Precio de venta por unidad</span>
+                        <span class="input-wrap">
+                            <span class="input-prefix">$</span>
+                            <input id="price" name="price" type="number" min="0" step="0.01" placeholder="20.00" required>
+                        </span>
+                    </label>
+
+                    <label class="field" for="sold">
+                        <span>Unidades vendidas este mes</span>
+                        <span class="input-wrap">
+                            <input id="sold" name="sold" type="number" min="0" step="1" placeholder="60" required>
+                            <span class="input-suffix">unidades</span>
+                        </span>
+                        <small id="sold-help">No puede superar las unidades compradas.</small>
+                    </label>
+
+                    <p id="form-error" class="form-error" role="alert" hidden></p>
+                    <button class="submit-button" type="submit">
+                        Calcular rendimiento
+                        <span aria-hidden="true">→</span>
+                    </button>
+                </form>
+                <p class="form-note"><span aria-hidden="true">🔒</span> Tus datos se calculan en esta página y no se envían a ningún servidor.</p>
+            </section>
+
+            <section class="results-column" aria-labelledby="results-title">
+                <div class="results-heading">
+                    <div>
+                        <p class="eyebrow">RESUMEN</p>
+                        <h2 id="results-title">Análisis del producto</h2>
+                    </div>
+                    <span id="result-status" class="result-status">Esperando datos</span>
+                </div>
+
+                <div id="empty-state" class="panel empty-state">
+                    <div class="empty-illustration" aria-hidden="true">
+                        <svg viewBox="0 0 64 64" fill="none">
+                            <rect x="8" y="11" width="48" height="42" rx="10" stroke="currentColor" stroke-width="2.5"/>
+                            <path d="M18 41V32M28 41V24M38 41V29M48 41V19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3>Tu análisis aparecerá aquí</h3>
+                    <p>Completa los datos del producto y presiona “Calcular rendimiento”.</p>
+                </div>
+
+                <div id="results" hidden>
+                    <div class="product-banner">
+                        <div class="product-info">
+                            <span>Producto analizado</span>
+                            <strong id="product-name-value"></strong>
+                        </div>
+                        <article id="diagnosis-card" class="diagnosis-card" aria-live="polite">
+                            <span id="diagnosis-icon" class="diagnosis-icon" aria-hidden="true"></span>
+                            <div>
+                                <p id="diagnosis-title" class="diagnosis-title"></p>
+                                <p id="diagnosis-text" class="diagnosis-text"></p>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="metric-grid">
+                        <article class="metric-card">
+                            <span class="metric-label">Ingresos por ventas en el mes</span>
+                            <strong id="revenue-value" class="metric-value">$0.00</strong>
+                            <span class="metric-caption">Dinero recibido por las unidades vendidas</span>
+                        </article>
+                        <article class="metric-card metric-card-highlight">
+                            <span class="metric-label">Ganancia bruta estimada total</span>
+                            <strong id="profit-value" class="metric-value">$0.00</strong>
+                            <span class="metric-caption">Antes de gastos como arriendo o impuestos</span>
+                        </article>
+                        <article class="metric-card metric-card-small return-card">
+                            <span class="metric-label">Retorno sobre la inversión inicial</span>
+                            <div class="gauge return-gauge" role="img" aria-label="Tacómetro de retorno sobre la inversión">
+                                <svg class="gauge-svg" viewBox="0 0 220 130" aria-hidden="true">
+                                    <defs>
+                                        <linearGradient id="return-gauge-gradient" x1="15" y1="110" x2="205" y2="110" gradientUnits="userSpaceOnUse">
+                                            <stop offset="0%" stop-color="#ff3864"/>
+                                            <stop offset="100%" stop-color="#38aaff"/>
+                                        </linearGradient>
+                                        <filter id="return-gauge-glow" x="-30%" y="-40%" width="160%" height="190%">
+                                            <feGaussianBlur stdDeviation="4" result="blur"/>
+                                            <feMerge>
+                                                <feMergeNode in="blur"/>
+                                                <feMergeNode in="SourceGraphic"/>
+                                            </feMerge>
+                                        </filter>
+                                    </defs>
+                                    <path class="gauge-track" d="M 15 110 A 95 95 0 0 1 205 110"/>
+                                    <path class="gauge-arc" d="M 15 110 A 95 95 0 0 1 205 110"/>
+                                    <g id="return-gauge-needle" class="gauge-needle" transform="rotate(0 110 110)">
+                                        <path d="M 110 110 L 110 48"/>
+                                    </g>
+                                    <circle class="gauge-hub" cx="110" cy="110" r="6"/>
+                                </svg>
+                                <div class="gauge-scale" aria-hidden="true">
+                                    <span id="return-gauge-min">0%</span>
+                                    <span id="return-gauge-max">100%</span>
+                                </div>
+                                <strong id="return-value" class="gauge-value">0.00%</strong>
+                            </div>
+                            <span class="metric-caption">Ganancia bruta comparada con toda la inversión inicial</span>
+                        </article>
+                        <article class="metric-card performance-card">
+                            <span class="metric-label">Rendimiento del producto</span>
+                            <div class="gauge product-performance-gauge" role="img" aria-label="Tacómetro de rendimiento del producto">
+                                <svg class="gauge-svg" viewBox="0 0 220 130" aria-hidden="true">
+                                    <defs>
+                                        <linearGradient id="gauge-gradient" x1="15" y1="110" x2="205" y2="110" gradientUnits="userSpaceOnUse">
+                                            <stop offset="0%" stop-color="#ff3864"/>
+                                            <stop offset="100%" stop-color="#38aaff"/>
+                                        </linearGradient>
+                                        <filter id="gauge-glow" x="-30%" y="-40%" width="160%" height="190%">
+                                            <feGaussianBlur stdDeviation="4" result="blur"/>
+                                            <feMerge>
+                                                <feMergeNode in="blur"/>
+                                                <feMergeNode in="SourceGraphic"/>
+                                            </feMerge>
+                                        </filter>
+                                    </defs>
+                                    <path class="gauge-track" d="M 15 110 A 95 95 0 0 1 205 110"/>
+                                    <path class="gauge-arc" d="M 15 110 A 95 95 0 0 1 205 110"/>
+                                    <g id="gauge-needle" class="gauge-needle" transform="rotate(0 110 110)">
+                                        <path d="M 110 110 L 110 48"/>
+                                    </g>
+                                    <circle class="gauge-hub" cx="110" cy="110" r="6"/>
+                                </svg>
+                                <div class="gauge-scale" aria-hidden="true">
+                                    <span id="performance-gauge-min">0%</span>
+                                    <span id="performance-gauge-max">100%</span>
+                                </div>
+                                <strong id="performance-value" class="gauge-value">0.00%</strong>
+                            </div>
+                            <span class="metric-caption">Ganancia como parte de las ventas</span>
+                        </article>
+                    </div>
+
+                    <article class="panel inventory-panel">
+                        <div class="inventory-heading">
+                            <div>
+                                <p class="eyebrow">LO QUE SIGUE EN TU NEGOCIO</p>
+                                <h3>Inventario restante</h3>
+                            </div>
+                        </div>
+                        <div class="inventory-values">
+                            <div>
+                                <span class="detail-label">Unidades disponibles</span>
+                                <strong id="remaining-value">0</strong>
+                            </div>
+                            <div>
+                                <span class="detail-label">Valor al costo</span>
+                                <strong id="stock-value">$0.00</strong>
+                            </div>
+                        </div>
+                        <p class="inventory-note">El inventario se valora con lo que te costó comprarlo; no es ganancia todavía.</p>
+                    </article>
+
+                </div>
+            </section>
+        </div>
+        <footer>Una herramienta sencilla para tomar decisiones con más claridad.</footer>
+    </main>
+</body>
+</html>

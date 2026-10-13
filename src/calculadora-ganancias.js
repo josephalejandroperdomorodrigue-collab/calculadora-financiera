@@ -1,11 +1,11 @@
 const readline = require('readline');
 const { calcularRendimiento } = require('./calculo-rendimiento');
 const { clasificarRendimiento } = require('./clasificacion-rendimiento');
-const { mostrarReporte } = require('./reporte-consola');
+const { reportarAnalizis } = require('./reporte-consola');
 
 async function preguntarNumero(rl, pregunta, { entero = false, minimo = 0, maximo = Infinity } = {}) {
     while (true) {
-        const respuesta = await new Promise((resolve) => rl.question(pregunta, resolve));
+        const respuesta = await new Promise(resolve => rl.question(pregunta, resolve));
         const valor = Number(respuesta.trim());
 
         if (
@@ -33,25 +33,22 @@ async function iniciarDiagnostico() {
     });
 
     try {
-        console.log("=== 📊 BIENVENIDO A PROFITRADAR - DIAGNÓSTICO DE PRODUCTO ===");
+        console.log(" DIAGNÓSTICO DE PRODUCTO ");
 
         const costoInversion = await preguntarNumero(
-            rl,
-            "¿Cuánto fue el costo total de la inversión del lote o producto? ($): ",
+            rl,"¿Cuánto fue el costo total de la inversión del lote o producto? ($): ",
             { minimo: Number.EPSILON }
         );
         const cantidadComprada = await preguntarNumero(
-            rl,
-            "¿Cuál fue la cantidad total comprada de unidades?: ",
+            rl,"¿Cuál fue la cantidad total comprada de unidades?: ",
             { entero: true, minimo: 1 }
         );
         const precioVentaUnitario = await preguntarNumero(
-            rl,
-            "¿A qué precio se vende cada unidad? ($): "
+            rl,"¿A qué precio se vende cada unidad? ($): ",
+            { minimo: Number.EPSILON }
         );
         const cantidadVendidaMes = await preguntarNumero(
-            rl,
-            "¿Cuántas unidades se vendieron realmente en el mes?: ",
+            rl,"¿Cuántas unidades se vendieron realmente en el mes?: ",
             { entero: true, maximo: cantidadComprada }
         );
 
@@ -64,9 +61,9 @@ async function iniciarDiagnostico() {
 
         const resultado = {
             ...calculo,
-            diagnostico: clasificarRendimiento(calculo.roi, cantidadVendidaMes)
+            diagnostico: clasificarRendimiento(calculo.retorno, cantidadVendidaMes)
         };
-        mostrarReporte(resultado);
+        reportarAnalizis(resultado);
     } finally {
         rl.close();
     }

@@ -1,20 +1,24 @@
-function clasificarRendimiento(roi, cantidadVendidaMes) {
+function clasificarRendimiento(retorno, cantidadVendidaMes) {
     if (cantidadVendidaMes === 0) {
-        return "ℹ️ Aún no hay ventas registradas; todavía no se puede evaluar el rendimiento del producto.";
+        return "Aún no hay ventas registradas; todavía no se puede evaluar el rendimiento del producto";
     }
-    if (roi >= 50) {
+    if (retorno >= 50) {
         return "Más de un 50% de retorno. Camella bueno";
     }
-    if (roi >= 20) {
-        return "👍 Rendimiento Moderado: va bien, deja ganancias estables, pero vigila la rotación.";
+    if (retorno >= 20) {
+        return "El producto está raspando la olla, se puede mejorar";
     }
-    if (roi > 0) {
-        return "El retorno es bajo. Considera revisar el precio y los costos.";
+    if (retorno > 0) {
+        return "El producto está tirando la toalla";
     }
-    if (roi === 0) {
-        return "⚖️ Punto de equilibrio: recuperaste el costo de las unidades vendidas.";
+    if (retorno === 0) {
+        return "Como los perros en misa";
     }
-    return "Retorno de 0% Como los perros en misa";
+    return "Retorno de 0%. Llevado del bulto";
 }
 
-module.exports = { clasificarRendimiento };
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { clasificarRendimiento };
+} else {
+    globalThis.ClasificacionRendimiento = { clasificarRendimiento };
+}

@@ -1,7 +1,7 @@
 {
   "name": "salud-financiera-de-negocios",
   "version": "1.0.0",
-  "description": "",
+  "description": "Primera versión, nos fuimos de desarrolladores, estoy entendiendo :)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
